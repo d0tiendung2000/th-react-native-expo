@@ -11,7 +11,7 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerTitle: "Bài tập",
+        headerShown: false,
       }}
     ></Stack>
   );

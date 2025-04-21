@@ -3,6 +3,11 @@ import React from "react";
 import { Colors } from "../constants/Colors";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import CustomButton from "./CustomButton";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
 export default function SelectLab() {
   const router = useRouter();
   return (
@@ -10,6 +15,7 @@ export default function SelectLab() {
       style={{
         padding: 20,
         backgroundColor: Colors.WHITE,
+        height: "100%",
       }}
     >
       <View style={styles.infoRow}>
@@ -19,65 +25,54 @@ export default function SelectLab() {
           <Text style={styles.text}>2124802010660</Text>
         </View>
       </View>
-      <TouchableOpacity
+
+      <CustomButton
         onPress={() => router.push("/Labs/Lab1/lab1")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 1_1</Text>
-      </TouchableOpacity>
+        text="Lab 1_1"
+        icon={<Fontisto name="react" size={24} color="white" />}
+      />
 
-      <TouchableOpacity
-        onPress={() => router.push("/Labs/Lab1/calculator")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 1_2</Text>
-      </TouchableOpacity>
+      <CustomButton
+        onPress={() => router.push("/Labs/Lab1/lab1-2-calculator")}
+        text="Lab 1_2"
+        icon={<FontAwesome6 name="calculator" size={24} color="white" />}
+      />
 
-      <TouchableOpacity
+      <CustomButton
         onPress={() => router.push("/Labs/Lab2/lab2")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 2</Text>
-      </TouchableOpacity>
+        text="Lab 2"
+        icon={
+          <Fontisto
+            name="react"
+            size={24}
+            color="white"
+            style={{
+              marginRight: 5, // Canh chỉnh icon ở đây
+            }}
+          />
+        }
+        textStyle={{ marginRight: 20 }} // Canh chỉnh text ở đây
+      />
 
-      <TouchableOpacity
+      <CustomButton
         onPress={() => router.push("/Labs/Lab3/lab3")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 3</Text>
-      </TouchableOpacity>
+        text="Lab 3"
+      />
 
-      <TouchableOpacity
+      <CustomButton
         onPress={() => router.push("/Labs/Lab4/lab4")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 4</Text>
-      </TouchableOpacity>
+        text="Lab 4"
+      />
 
-      <TouchableOpacity
+      <CustomButton
         onPress={() => router.push("/Labs/Lab5/lab5")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Lab 5</Text>
-      </TouchableOpacity>
+        text="Lab 5"
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    padding: 20,
-    marginTop: 20,
-    borderRadius: 15,
-    backgroundColor: Colors.PRIMARY,
-  },
-  buttonText: {
-    color: Colors.WHITE,
-    fontSize: 20,
-    fontFamily: "outfit-bold",
-    textAlign: "center",
-  },
-
   text: {
     fontSize: 27,
     fontFamily: "outfit-bold",
