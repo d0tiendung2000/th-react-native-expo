@@ -10,11 +10,13 @@ import { Colors } from "../../../constants/Colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function Calculator() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
   const router = useRouter();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handlePress = (value) => {
     if (value === "C") {
@@ -31,13 +33,15 @@ export default function Calculator() {
       }
     } else {
       if (value === ".") {
-        // Lấy phần số hiện tại bằng cách tách chuỗi theo toán tử
         const lastNumber = input.split(/[\+\-×÷]/).pop();
-        // Nếu đã có dấu chấm trong phần số hiện tại → bỏ qua
         if (lastNumber.includes(".")) return;
       }
       setInput((prev) => prev + value);
     }
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
   };
 
   const renderButton = (value, isOperator = false, isDouble = false) => (
@@ -45,11 +49,26 @@ export default function Calculator() {
       onPress={() => handlePress(value)}
       style={[
         styles.button,
-        isOperator && { backgroundColor: "#F7B731" },
+        {
+          backgroundColor: isOperator
+            ? isDarkMode
+              ? "#f39c12"
+              : "#F7B731"
+            : isDarkMode
+            ? "#444"
+            : Colors.PRIMARY,
+        },
         isDouble && styles.buttonDouble,
       ]}
     >
-      <Text style={styles.buttonText}>{value}</Text>
+      <Text
+        style={[
+          styles.buttonText,
+          { color: isDarkMode ? "#fff" : Colors.WHITE },
+        ]}
+      >
+        {value}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -57,35 +76,78 @@ export default function Calculator() {
     <View
       style={{
         padding: 20,
-        backgroundColor: Colors.WHITE,
+        backgroundColor: isDarkMode ? "#1e1e1e" : Colors.WHITE,
         height: "100%",
       }}
     >
       <TouchableOpacity onPress={() => router.replace("/")}>
-        <AntDesign name="back" size={24} color="black" />
+        <AntDesign
+          name="back"
+          size={24}
+          color={isDarkMode ? "white" : "black"}
+        />
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.container}>
-        <LottieView
-          source={require("../../../assets/json/Calculator.json")}
-          autoPlay
-          style={{
-            width: 200,
-            height: 200,
-            alignSelf: "center",
-          }}
-        />
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#1e1e1e" : Colors.WHITE },
+        ]}
+      >
+        <View style={{ flexDirection: "row" }}>
+          <SafeAreaView>
+            <LottieView
+              source={require("../../../assets/json/Calculator.json")}
+              autoPlay
+              style={{
+                width: 200,
+                height: 200,
+                marginLeft: 80,
+              }}
+            />
+          </SafeAreaView>
+          <TouchableOpacity onPress={toggleDarkMode} style={{ marginTop: 50 }}>
+            <MaterialIcons
+              name={isDarkMode ? "light-mode" : "dark-mode"}
+              size={100}
+              color={isDarkMode ? "white" : "black"}
+            />
+          </TouchableOpacity>
+        </View>
 
-        <View style={styles.screen}>
-          <Text style={styles.input}>{input}</Text>
-          <Text style={styles.result}>{result || "0"}</Text>
+        <View
+          style={[
+            styles.screen,
+            {
+              backgroundColor: isDarkMode ? "#333" : Colors.GRAY,
+              borderColor: isDarkMode ? "white" : "black",
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.input,
+              { color: isDarkMode ? "#eee" : Colors.PRIMARY },
+            ]}
+          >
+            {input}
+          </Text>
+          <Text
+            style={[
+              styles.result,
+              { color: isDarkMode ? "#fff" : Colors.WHITE },
+            ]}
+          >
+            {result || "0"}
+          </Text>
         </View>
 
         <View
           style={{
             borderWidth: 2,
-            backgroundColor: Colors.GRAY,
+            backgroundColor: isDarkMode ? "#2a2a2a" : Colors.GRAY,
             borderRadius: 15,
+            borderColor: isDarkMode ? "white" : "black",
           }}
         >
           <View style={styles.row}>
@@ -124,7 +186,6 @@ export default function Calculator() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.WHITE,
     justifyContent: "flex-end",
     height: "100%",
     paddingBottom: 20,
@@ -132,19 +193,16 @@ const styles = StyleSheet.create({
   screen: {
     marginBottom: 20,
     borderRadius: 15,
-    backgroundColor: Colors.GRAY,
     padding: 20,
     borderWidth: 2,
   },
   input: {
     fontSize: 32,
-    color: Colors.PRIMARY,
     textAlign: "right",
     fontFamily: "outfit-bold",
   },
   result: {
     fontSize: 40,
-    color: Colors.WHITE,
     textAlign: "right",
     fontFamily: "outfit-bold",
   },
@@ -159,7 +217,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: Colors.PRIMARY,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
@@ -169,7 +226,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 24,
-    color: Colors.WHITE,
     fontFamily: "outfit-bold",
   },
 });
