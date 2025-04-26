@@ -39,7 +39,7 @@ export default function SelectLab() {
       />
 
       <CustomButton
-        onPress={() => router.push("/Labs/Lab2/lab2")}
+        onPress={() => router.push("/Labs/Lab2/(tabs)/contacts")}
         text="Lab 2"
         icon={
           <Fontisto
