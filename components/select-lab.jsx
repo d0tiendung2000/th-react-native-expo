@@ -41,32 +41,29 @@ export default function SelectLab() {
       <CustomButton
         onPress={() => router.push("/Labs/Lab2/(tabs)/contacts")}
         text="Lab 2"
-        icon={
-          <Fontisto
-            name="react"
-            size={24}
-            color="white"
-            style={{
-              marginRight: 5, // Canh chỉnh icon ở đây
-            }}
-          />
-        }
-        textStyle={{ marginRight: 20 }} // Canh chỉnh text ở đây
+        icon={<AntDesign name="API" size={24} color="white" />}
+        textStyle={{ marginRight: 20 }}
       />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab3/lab3")}
         text="Lab 3"
+        icon={<AntDesign name="API" size={24} color="white" />}
+        textStyle={{ marginRight: 20 }}
       />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab4/lab4")}
         text="Lab 4"
+        icon={<AntDesign name="API" size={24} color="white" />}
+        textStyle={{ marginRight: 20 }}
       />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab5/lab5")}
         text="Lab 5"
+        icon={<AntDesign name="API" size={24} color="white" />}
+        textStyle={{ marginRight: 20 }}
       />
     </View>
   );
