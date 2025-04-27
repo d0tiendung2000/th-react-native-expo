@@ -1,13 +1,15 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Colors } from "../../../constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
-export default function Details() {
-  const { avatar, name, phone, email, address, company, birthDate } =
+export default function DetailsContact() {
+  const { avatar, name, phone, email, address, company } =
     useLocalSearchParams();
+  const [starred, setStarred] = useState(false);
 
   return (
     <>
@@ -20,14 +22,21 @@ export default function Details() {
           },
           headerTintColor: "white",
           headerTitleAlign: "center",
+          headerRight: () => (
+            <TouchableOpacity onPress={() => setStarred(!starred)}>
+              <AntDesign
+                name="star"
+                size={30}
+                color={starred ? "black" : "white"}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
       <View style={styles.container}>
         <View style={{ backgroundColor: Colors.GRAY, height: 350 }}>
           <Image source={{ uri: avatar }} style={styles.avatar} />
-          <Text style={styles.name}>
-            {name} ({birthDate})
-          </Text>
+          <Text style={styles.name}>{name}</Text>
 
           <View
             style={{

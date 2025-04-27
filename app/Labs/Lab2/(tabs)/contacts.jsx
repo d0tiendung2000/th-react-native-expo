@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { Colors } from "../../../../constants/Colors";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
@@ -18,10 +19,12 @@ export default function Contacts() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/users");
+        const response = await fetch(
+          "https://680d9f94c47cb8074d90c99d.mockapi.io/user"
+        );
         const data = await response.json();
-        console.log(data);
-        setContacts(data.users); // <== Lấy users, không phải results
+        // console.log(data);
+        setContacts(data); // <== Lấy users, không phải results
       } catch (error) {
         console.error("Error fetching contacts:", error);
       } finally {
@@ -42,6 +45,17 @@ export default function Contacts() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Contacts",
+          headerStyle: {
+            backgroundColor: Colors.WHITE,
+          },
+          headerTintColor: "black",
+          headerTitleAlign: "center",
+        }}
+      />
       <FlatList
         data={contacts}
         keyExtractor={(item) => item.id.toString()} // <== key là id
@@ -49,28 +63,26 @@ export default function Contacts() {
           <TouchableOpacity
             onPress={() =>
               router.push({
-                pathname: "/Labs/Lab2/details",
+                pathname: "/Labs/Lab2/details_contact",
                 params: {
-                  avatar: item.image, // <== Đổi
-                  name: `${item.firstName} ${item.lastName}`, // <== Đổi
+                  avatar: item.avatar, // <== Đổi
+                  name: item.name, // <== Đổi
                   phone: item.phone,
                   email: item.email,
-                  address: `${item.address.address}, ${item.address.city}, ${item.address.state}`,
-                  company: `${item.company.name}, ${item.company.title}`,
-                  birthDate: item.birthDate,
+                  address: item.address,
+                  // address: `${item.address.address}, ${item.address.city}, ${item.address.state}`,
+                  company: item.company,
                 },
               })
             }
           >
             <View style={styles.contactItem}>
               <Image
-                source={{ uri: item.image }} // <== Đổi
+                source={{ uri: item.avatar }} // <== Đổi
                 style={styles.avatar}
               />
               <View style={styles.contactDetails}>
-                <Text style={styles.contactName}>
-                  {item.firstName} {item.lastName}
-                </Text>
+                <Text style={styles.contactName}>{item.name}</Text>
                 <Text style={styles.contactPhone}>{item.phone}</Text>
                 <Text style={styles.contactEmail}>{item.email}</Text>
               </View>
@@ -86,6 +98,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: Colors.WHITE,
   },
   center: {
     flex: 1,
