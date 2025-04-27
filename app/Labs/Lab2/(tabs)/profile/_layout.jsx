@@ -4,7 +4,7 @@ export default function ProfileLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false, // Ẩn header mặc định của stack
+        headerShown: false,
       }}
     />
   );
