@@ -3,10 +3,7 @@ import React from "react";
 import { Colors } from "../constants/Colors";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CustomButton from "./CustomButton";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function SelectLab() {
   const router = useRouter();
@@ -29,42 +26,26 @@ export default function SelectLab() {
       <CustomButton
         onPress={() => router.push("/Labs/Lab1/lab1")}
         text="Lab 1_1"
-        icon={<Fontisto name="react" size={24} color="white" />}
       />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab1/lab1-2-calculator")}
         text="Lab 1_2"
-        icon={<FontAwesome6 name="calculator" size={24} color="white" />}
       />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab2/(tabs)/contacts")}
         text="Lab 2"
-        icon={<AntDesign name="API" size={24} color="white" />}
-        textStyle={{ marginRight: 20 }}
       />
 
-      <CustomButton
-        onPress={() => router.push("/Labs/Lab3/lab3")}
-        text="Lab 3"
-        icon={<AntDesign name="API" size={24} color="white" />}
-        textStyle={{ marginRight: 20 }}
-      />
+      <CustomButton onPress={() => router.push("/Labs/Lab3")} text="Lab 3" />
 
       <CustomButton
         onPress={() => router.push("/Labs/Lab4/lab4")}
         text="Lab 4"
-        icon={<AntDesign name="API" size={24} color="white" />}
-        textStyle={{ marginRight: 20 }}
       />
 
-      <CustomButton
-        onPress={() => router.push("/Labs/Lab5/lab5")}
-        text="Lab 5"
-        icon={<AntDesign name="API" size={24} color="white" />}
-        textStyle={{ marginRight: 20 }}
-      />
+      <CustomButton onPress={() => router.push("/test/student")} text="Lab 5" />
     </View>
   );
 }
