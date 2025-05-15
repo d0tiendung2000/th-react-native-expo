@@ -64,6 +64,19 @@ export default function LoginScreen() {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
+
+          // Check if user is blocked
+          if (userData.isBlocked) {
+            Alert.alert(
+              "Account Blocked",
+              "Your account has been blocked. Please contact support for assistance.",
+              [{ text: "OK" }]
+            );
+            // Sign out the user
+            auth.signOut();
+            return;
+          }
+
           // Check if user is admin or customer
           if (userData.role === "admin" || email === "admin@gmail.com") {
             router.replace("/Labs/Lab3/admin/(tabs)/home");
