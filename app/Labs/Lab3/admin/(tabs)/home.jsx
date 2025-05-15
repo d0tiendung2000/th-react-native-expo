@@ -5,14 +5,15 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Colors } from "../../../../constants/Colors";
+import { Colors } from "../../../../../constants/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation, useRouter } from "expo-router";
 import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
-import { db } from "../../../../configs/firebase";
-import { auth } from "../../../../configs/firebase";
+import { db } from "../../../../../configs/firebase";
+import { auth } from "../../../../../configs/firebase";
 import { signOut } from "firebase/auth";
 
 export default function home() {
@@ -39,7 +40,7 @@ export default function home() {
     navigation.setOptions({
       //Hiện thanh header phía trên và nút quay lại
       headerShown: true,
-      headerTitle: userFullName || "Admin",
+      headerTitle: userFullName,
       //đổi màu thanh header
       headerStyle: {
         backgroundColor: "#F06277",
@@ -90,11 +91,8 @@ export default function home() {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#F06277" barStyle="light-content" />
-      <View>
-        <Image
-          source={require("../../../../assets/images/logolab3.png")}
-          style={styles.logo}
-        />
+      <View style={{ alignItems: "center" }}>
+        <Image source={require("../../../../../assets/images/logolab3.png")} />
       </View>
       <View
         style={{
@@ -106,7 +104,7 @@ export default function home() {
       >
         <Text style={styles.text}>Danh sách dịch vụ</Text>
         <TouchableOpacity
-          onPress={() => router.push("/Labs/Lab3/service/add_service")}
+          onPress={() => router.push("/Labs/Lab3/admin/service/add_service")}
         >
           <Ionicons
             name="add-circle"
@@ -118,37 +116,39 @@ export default function home() {
           />
         </TouchableOpacity>
       </View>
-      <View style={{ marginTop: 20 }}>
-        {services.map((service) => (
-          <TouchableOpacity
-            key={service.id}
-            style={styles.frameButton}
-            onPress={() =>
-              router.push({
-                pathname: "/Labs/Lab3/service/detail_service",
-                params: {
-                  id: service.id,
-                  name: service.name,
-                  price: service.price,
-                  createdAt: service.createdAt,
-                  updatedAt: service.updatedAt,
-                },
-              })
-            }
-          >
-            <View style={styles.row}>
-              <Text
-                style={styles.textFrameButton}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {service.name}
-              </Text>
-              <Text style={styles.priceText}>{service.price}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <ScrollView>
+        <View style={{ marginTop: 20 }}>
+          {services.map((service) => (
+            <TouchableOpacity
+              key={service.id}
+              style={styles.frameButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/Labs/Lab3/admin/service/detail_service",
+                  params: {
+                    id: service.id,
+                    name: service.name,
+                    price: service.price,
+                    createdAt: service.createdAt,
+                    updatedAt: service.updatedAt,
+                  },
+                })
+              }
+            >
+              <View style={styles.row}>
+                <Text
+                  style={styles.textFrameButton}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {service.name}
+                </Text>
+                <Text style={styles.priceText}>{service.price}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -160,20 +160,18 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 
-  logo: {
-    alignSelf: "center",
-    marginTop: 20,
-  },
   text: {
     fontSize: 30,
     fontFamily: "outfit-bold",
     color: Colors.PRIMARY,
   },
   frameButton: {
-    backgroundColor: Colors.GRAY,
+    backgroundColor: Colors.WHITE,
     padding: 15,
     borderRadius: 15,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Colors.GRAY,
   },
 
   row: {

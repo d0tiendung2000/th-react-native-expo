@@ -4,7 +4,7 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { Colors } from "../../../../constants/Colors";
+import { Colors } from "../../../../../constants/Colors";
 
 export default function TabLayout() {
   return (
@@ -23,6 +23,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="transaction"
         options={{
@@ -32,6 +33,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="customer"
         options={{

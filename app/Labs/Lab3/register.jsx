@@ -12,7 +12,7 @@ import { Colors } from "../../../constants/Colors";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
-import Ionicons from "@expo/vector-icons/Ionicons";
+
 import { auth } from "../../../configs/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -48,21 +48,29 @@ export default function CreateAccount() {
         await setDoc(doc(db, "users", user.uid), {
           fullName: fullName,
           email: email,
+          role: "customer",
         });
-        router.replace("/Labs/Lab3/(tabs)/home");
+        router.replace("/Labs/Lab3");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
+        if (errorCode === "auth/email-already-in-use") {
+          ToastAndroid.show("Email already in use", ToastAndroid.LONG);
+        } else if (errorCode === "auth/weak-password") {
+          ToastAndroid.show(
+            "Password should be at least 6 characters",
+            ToastAndroid.LONG
+          );
+        } else {
+          ToastAndroid.show("Registration failed", ToastAndroid.LONG);
+        }
       });
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()}>
-        <Ionicons name="caret-back" size={24} color="black" />
-      </TouchableOpacity>
       <Text style={[styles.text, { marginTop: 70 }]}>
         Create a new account!
       </Text>
@@ -144,7 +152,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: Colors.WHITE,
-    height: "100%",
+    flex: 1,
   },
   button: {
     padding: 15,

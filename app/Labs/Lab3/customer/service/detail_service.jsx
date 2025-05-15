@@ -7,11 +7,11 @@ import {
   Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Colors } from "./../../../../constants/Colors";
+import { Colors } from "./../../../../../constants/Colors";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { doc, deleteDoc } from "firebase/firestore";
-import { db } from "./../../../../configs/firebase";
+import { db } from "./../../../../../configs/firebase";
 
 export default function DetailService() {
   const navigation = useNavigation();
@@ -19,39 +19,6 @@ export default function DetailService() {
   const params = useLocalSearchParams();
   const { id, name, price, createdAt, updatedAt } = params;
   const [showMenu, setShowMenu] = useState(false);
-
-  const handleDelete = async () => {
-    Alert.alert(
-      "Delete Service",
-      "Are you sure you want to delete this service?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteDoc(doc(db, "services", id));
-              router.back();
-            } catch (error) {
-              console.error("Error deleting service:", error);
-              Alert.alert("Error", "Failed to delete service");
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleUpdate = () => {
-    router.push({
-      pathname: "/Labs/Lab3/service/update_service",
-      params: { id, name, price },
-    });
-  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -64,16 +31,6 @@ export default function DetailService() {
         color: Colors.WHITE,
       },
       headerTintColor: Colors.WHITE,
-      headerRight: () => (
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-          <SimpleLineIcons
-            name="options-vertical"
-            size={30}
-            color="white"
-            style={{ marginRight: 10 }}
-          />
-        </TouchableOpacity>
-      ),
     });
   }, []);
 
@@ -82,28 +39,6 @@ export default function DetailService() {
       <StatusBar backgroundColor="#F06277" barStyle="light-content" />
 
       <View style={styles.detailContainer}>
-        {showMenu && (
-          <View style={styles.menu}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                setShowMenu(false);
-                handleUpdate();
-              }}
-            >
-              <Text style={styles.menuText}>Update</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => {
-                setShowMenu(false);
-                handleDelete();
-              }}
-            >
-              <Text style={[styles.menuText, { color: "red" }]}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
         <View style={styles.detailItem}>
           <Text style={styles.label}>Service Name:</Text>
           <Text style={styles.value}>{name}</Text>

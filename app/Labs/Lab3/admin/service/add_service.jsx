@@ -8,10 +8,10 @@ import {
   ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Colors } from "./../../../../constants/Colors";
+import { Colors } from "./../../../../../constants/Colors";
 import { useNavigation } from "expo-router";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "./../../../../configs/firebase";
+import { db } from "./../../../../../configs/firebase";
 
 export default function AddService() {
   const navigation = useNavigation();

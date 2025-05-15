@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   StatusBar,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { use } from "react";
@@ -16,7 +17,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
 import { auth } from "../../../configs/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../configs/firebase";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -52,18 +58,59 @@ export default function LoginScreen() {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
-        router.replace("/Labs/Lab3/(tabs)/home");
-        console.log(user);
+        // Get user role from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Check if user is admin or customer
+          if (userData.role === "admin" || email === "admin@gmail.com") {
+            router.replace("/Labs/Lab3/admin/(tabs)/home");
+          } else {
+            router.replace("/Labs/Lab3/customer/(tabs)/home");
+          }
+        } else {
+          // If no role is set, treat as customer
+          router.replace("/Labs/Lab3/customer/(tabs)/home");
+        }
       })
-
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage, errorCode);
         if (errorCode == "auth/invalid-credential") {
           ToastAndroid.show("Invalid Email or Password", ToastAndroid.LONG);
+        }
+      });
+  };
+
+  const handleForgotPassword = () => {
+    if (email.trim() === "") {
+      setEmailError("Please enter Email");
+      return;
+    }
+    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      setEmailError("Email format example@gmail.com");
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        Alert.alert(
+          "Password Reset",
+          "Password reset email has been sent to your email address.",
+          [{ text: "OK" }]
+        );
+      })
+      .catch((error) => {
+        if (error.code === "auth/user-not-found") {
+          ToastAndroid.show(
+            "No account found with this email",
+            ToastAndroid.LONG
+          );
+        } else {
+          ToastAndroid.show("Failed to send reset email", ToastAndroid.LONG);
         }
       });
   };
@@ -132,6 +179,14 @@ export default function LoginScreen() {
         <Text style={styles.textError}>{passwordError}</Text>
       )}
 
+      {/* Forgot Password Button */}
+      <TouchableOpacity
+        onPress={handleForgotPassword}
+        style={styles.forgotPasswordButton}
+      >
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </TouchableOpacity>
+
       {/*Button Login*/}
       <TouchableOpacity
         onPress={OnClickLogin}
@@ -196,5 +251,15 @@ const styles = StyleSheet.create({
     fontFamily: "outfit-bold",
     marginTop: 5,
     marginLeft: 10,
+  },
+  forgotPasswordButton: {
+    alignSelf: "flex-end",
+    marginTop: 10,
+    marginRight: 10,
+  },
+  forgotPasswordText: {
+    color: "#F06277",
+    fontFamily: "outfit-medium",
+    fontSize: 16,
   },
 });
