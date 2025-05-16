@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../../../../constants/Colors"; // hoặc bạn thay Colors = { PRIMARY: "#F06277", WHITE: "#fff", ... }
@@ -18,6 +19,10 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState("fiction");
 
   const [allBooks, setAllBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAll, setIsLoadingAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 10; // Số sách hiển thị trên mỗi trang
 
   const categories = [
     { id: "fiction", label: "Best Seller" },
@@ -26,28 +31,35 @@ export default function HomeScreen() {
   ];
 
   const fetchBooksFromGoogle = async (category = "fiction") => {
-    const response = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=subject:${category}&langRestrict=en&maxResults=8`
-    );
-    const data = await response.json();
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=subject:${category}&langRestrict=en&maxResults=20`
+      );
+      const data = await response.json();
 
-    const formattedBooks = data.items.map((item) => ({
-      id: item.id,
-      title: item.volumeInfo.title,
-      author: item.volumeInfo.authors?.[0] || "Unknown",
-      image:
-        item.volumeInfo.imageLinks?.thumbnail ||
-        "https://via.placeholder.com/120x160.png?text=No+Image",
-      pageCount: item.volumeInfo.pageCount || "N/A",
-      rating: item.volumeInfo.averageRating || 4,
-      description: item.volumeInfo.description || "No description",
-      completion: `${Math.floor(Math.random() * 80) + 10}%`,
-      lastRead: `${Math.floor(Math.random() * 7) + 1}d ${Math.floor(
-        Math.random() * 24
-      )}h`,
-    }));
+      const formattedBooks = data.items.map((item) => ({
+        id: item.id,
+        title: item.volumeInfo.title,
+        author: item.volumeInfo.authors?.[0] || "Unknown",
+        image:
+          item.volumeInfo.imageLinks?.thumbnail ||
+          "https://via.placeholder.com/120x160.png?text=No+Image",
+        pageCount: item.volumeInfo.pageCount || "N/A",
+        rating: item.volumeInfo.averageRating || 4,
+        description: item.volumeInfo.description || "No description",
+        completion: `${Math.floor(Math.random() * 80) + 10}%`,
+        lastRead: `${Math.floor(Math.random() * 7) + 1}d ${Math.floor(
+          Math.random() * 24
+        )}h`,
+      }));
 
-    setBooks(formattedBooks);
+      setBooks(formattedBooks);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -55,41 +67,109 @@ export default function HomeScreen() {
   }, [selectedCategory]);
 
   const fetchAllBooksOnce = async () => {
-    const subjects = ["fiction", "drama", "romance"];
-    let results = [];
+    setIsLoadingAll(true);
+    try {
+      const subjects = ["fiction", "drama", "romance"];
+      let results = [];
 
-    for (const subject of subjects) {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=subject:${subject}&langRestrict=en&maxResults=6`
-      );
-      const data = await response.json();
+      for (const subject of subjects) {
+        const response = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=subject:${subject}&langRestrict=en&maxResults=40`
+        );
+        const data = await response.json();
 
-      const formatted =
-        data.items?.map((item) => ({
-          id: item.id,
-          title: item.volumeInfo.title,
-          author: item.volumeInfo.authors?.[0] || "Unknown",
-          image:
-            item.volumeInfo.imageLinks?.thumbnail ||
-            "https://via.placeholder.com/120x160.png?text=No+Image",
-          pageCount: item.volumeInfo.pageCount || "N/A",
-          rating: item.volumeInfo.averageRating || 4,
-          description: item.volumeInfo.description || "No description",
-          completion: `${Math.floor(Math.random() * 80) + 10}%`,
-          lastRead: `${Math.floor(Math.random() * 7) + 1}d ${Math.floor(
-            Math.random() * 24
-          )}h`,
-        })) || [];
+        const formatted =
+          data.items?.map((item) => ({
+            id: item.id,
+            title: item.volumeInfo.title,
+            author: item.volumeInfo.authors?.[0] || "Unknown",
+            image:
+              item.volumeInfo.imageLinks?.thumbnail ||
+              "https://via.placeholder.com/120x160.png?text=No+Image",
+            pageCount: item.volumeInfo.pageCount || "N/A",
+            rating: item.volumeInfo.averageRating || 4,
+            description: item.volumeInfo.description || "No description",
+            completion: `${Math.floor(Math.random() * 80) + 10}%`,
+            lastRead: `${Math.floor(Math.random() * 7) + 1}d ${Math.floor(
+              Math.random() * 24
+            )}h`,
+          })) || [];
 
-      results = [...results, ...formatted];
+        results = [...results, ...formatted];
+      }
+
+      setAllBooks(results);
+    } catch (error) {
+      console.error("Error fetching all books:", error);
+    } finally {
+      setIsLoadingAll(false);
     }
-
-    setAllBooks(results);
   };
 
   useEffect(() => {
     fetchAllBooksOnce();
   }, []);
+
+  // Thêm hàm tính toán sách cho trang hiện tại
+  const getCurrentPageBooks = () => {
+    const startIndex = (currentPage - 1) * booksPerPage;
+    const endIndex = startIndex + booksPerPage;
+    return allBooks.slice(startIndex, endIndex);
+  };
+
+  // Thêm hàm tính tổng số trang
+  const getTotalPages = () => {
+    return Math.ceil(allBooks.length / booksPerPage);
+  };
+
+  // Thêm hàm xử lý chuyển trang
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Thêm hàm mới để tạo mảng số trang cần hiển thị
+  const getPageNumbers = () => {
+    const totalPages = getTotalPages();
+    const currentPage = currentPage;
+    const pageNumbers = [];
+
+    // Luôn hiển thị trang đầu tiên
+    pageNumbers.push(1);
+
+    // Tính toán các trang cần hiển thị
+    if (totalPages <= 7) {
+      // Nếu tổng số trang <= 7, hiển thị tất cả
+      for (let i = 2; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Nếu tổng số trang > 7
+      if (currentPage <= 4) {
+        // Nếu đang ở các trang đầu
+        for (let i = 2; i <= 5; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push("...");
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        // Nếu đang ở các trang cuối
+        pageNumbers.push("...");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Nếu đang ở giữa
+        pageNumbers.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push("...");
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <View style={styles.container}>
@@ -159,43 +239,20 @@ export default function HomeScreen() {
         </ScrollView>
 
         {/* Book List - Carousel */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.bookList}
-        >
-          {books.map((item) => (
-            <TouchableOpacity
-              style={styles.bookCard}
-              key={item.id}
-              onPress={() =>
-                router.push({
-                  pathname: "/Labs/Lab6/detail_book",
-                  params: { book: JSON.stringify(item) },
-                })
-              }
-            >
-              <Image source={{ uri: item.image }} style={styles.bookImage} />
-              <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle} numberOfLines={2}>
-                  {item.title}
-                </Text>
-                <Text style={styles.bookAuthor}>{item.author}</Text>
-                <Text style={styles.bookMeta}>
-                  ⏱ {item.lastRead} | 📘 {item.completion}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* All Books */}
-        <View style={styles.allBooksContainer}>
-          <Text style={styles.allBooksTitle}>All Books</Text>
-          <View style={styles.allBooksGrid}>
-            {allBooks.map((item) => (
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#F06277" />
+            <Text style={styles.loadingText}>Loading books...</Text>
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.bookList}
+          >
+            {books.map((item) => (
               <TouchableOpacity
-                style={styles.allBooksCard}
+                style={styles.bookCard}
                 key={item.id}
                 onPress={() =>
                   router.push({
@@ -204,22 +261,118 @@ export default function HomeScreen() {
                   })
                 }
               >
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.allBooksImage}
-                />
-                <View style={styles.allBooksInfo}>
-                  <Text style={styles.allBooksTitle} numberOfLines={2}>
+                <Image source={{ uri: item.image }} style={styles.bookImage} />
+                <View style={styles.bookInfo}>
+                  <Text style={styles.bookTitle} numberOfLines={2}>
                     {item.title}
                   </Text>
-                  <Text style={styles.allBooksAuthor}>{item.author}</Text>
-                  <Text style={styles.allBooksMeta}>
+                  <Text style={styles.bookAuthor}>{item.author}</Text>
+                  <Text style={styles.bookMeta}>
                     ⏱ {item.lastRead} | 📘 {item.completion}
                   </Text>
                 </View>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
+        )}
+
+        {/* All Books */}
+        <View style={styles.allBooksContainer}>
+          <Text style={styles.allBooksTitle}>All Books</Text>
+          {isLoadingAll ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#F06277" />
+              <Text style={styles.loadingText}>Loading all books...</Text>
+            </View>
+          ) : (
+            <>
+              <View style={styles.allBooksGrid}>
+                {getCurrentPageBooks().map((item) => (
+                  <TouchableOpacity
+                    style={styles.allBooksCard}
+                    key={item.id}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/Labs/Lab6/detail_book",
+                        params: { book: JSON.stringify(item) },
+                      })
+                    }
+                  >
+                    <Image
+                      source={{ uri: item.image }}
+                      style={styles.allBooksImage}
+                    />
+                    <View style={styles.allBooksInfo}>
+                      <Text style={styles.allBooksTitle} numberOfLines={2}>
+                        {item.title}
+                      </Text>
+                      <Text style={styles.allBooksAuthor}>{item.author}</Text>
+                      <Text style={styles.allBooksMeta}>
+                        ⏱ {item.lastRead} | 📘 {item.completion}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Pagination */}
+              <View style={styles.paginationContainer}>
+                {/* Nút về trang đầu */}
+                <TouchableOpacity
+                  style={[
+                    styles.pageButton,
+                    currentPage === 1 && styles.pageButtonDisabled,
+                  ]}
+                  onPress={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                >
+                  <Ionicons name="play-skip-back" size={20} color="white" />
+                </TouchableOpacity>
+
+                {/* Nút trang trước */}
+                <TouchableOpacity
+                  style={[
+                    styles.pageButton,
+                    currentPage === 1 && styles.pageButtonDisabled,
+                  ]}
+                  onPress={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <Ionicons name="chevron-back" size={20} color="white" />
+                </TouchableOpacity>
+
+                <Text style={styles.pageInfo}>
+                  Page {currentPage} of {getTotalPages()}
+                </Text>
+
+                {/* Nút trang tiếp */}
+                <TouchableOpacity
+                  style={[
+                    styles.pageButton,
+                    currentPage === getTotalPages() &&
+                      styles.pageButtonDisabled,
+                  ]}
+                  onPress={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === getTotalPages()}
+                >
+                  <Ionicons name="chevron-forward" size={20} color="white" />
+                </TouchableOpacity>
+
+                {/* Nút đến trang cuối */}
+                <TouchableOpacity
+                  style={[
+                    styles.pageButton,
+                    currentPage === getTotalPages() &&
+                      styles.pageButtonDisabled,
+                  ]}
+                  onPress={() => handlePageChange(getTotalPages())}
+                  disabled={currentPage === getTotalPages()}
+                >
+                  <Ionicons name="play-skip-forward" size={20} color="white" />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -371,5 +524,61 @@ const styles = StyleSheet.create({
     color: "#999",
     fontSize: 10,
     marginTop: 4,
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 200,
+  },
+  loadingText: {
+    color: "#fff",
+    marginTop: 10,
+    fontSize: 16,
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 10,
+    flexWrap: "wrap",
+    gap: 5,
+  },
+  pageButton: {
+    minWidth: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#1e1e1e",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  pageButtonActive: {
+    backgroundColor: "#F06277",
+  },
+  pageButtonDisabled: {
+    opacity: 0.5,
+  },
+  pageButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  pageButtonTextActive: {
+    color: "white",
+  },
+  ellipsis: {
+    color: "white",
+    fontSize: 16,
+    marginHorizontal: 5,
+  },
+  pageInfo: {
+    color: "white",
+    fontSize: 14,
+    marginHorizontal: 15,
+  },
+  doubleChevron: {
+    marginLeft: -10, // Để hai icon chồng lên nhau một chút
   },
 });

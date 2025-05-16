@@ -55,6 +55,14 @@ export default function DetailBook() {
               <Ionicons name="star" size={20} color="#F06277" />
               <Text style={styles.statText}>{book.rating}/5</Text>
             </View>
+            <View style={styles.statItem}>
+              <Ionicons
+                name="document-text-outline"
+                size={20}
+                color="#F06277"
+              />
+              <Text style={styles.statText}>{book.pageCount} pages</Text>
+            </View>
           </View>
 
           {/* Description */}
