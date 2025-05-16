@@ -15,6 +15,9 @@ export default function TabLayout() {
         tabBarStyle: {
           height: 50,
         },
+        tabBarBackground: () => (
+          <View style={{ backgroundColor: Colors.black, height: 60 }} />
+        ),
       }}
     >
       <Tabs.Screen
