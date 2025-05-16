@@ -23,29 +23,40 @@ export default function SelectLab() {
         </View>
       </View>
 
-      <CustomButton
+      <TouchableOpacity
         onPress={() => router.push("/Labs/Lab1/lab1")}
-        text="Lab 1_1"
-      />
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Lab1_1</Text>
+      </TouchableOpacity>
 
-      <CustomButton
+      <TouchableOpacity
         onPress={() => router.push("/Labs/Lab1/lab1-2-calculator")}
-        text="Lab 1_2"
-      />
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Lab1_2</Text>
+      </TouchableOpacity>
 
-      <CustomButton
+      <TouchableOpacity
         onPress={() => router.push("/Labs/Lab2/(tabs)/contacts")}
-        text="Lab 2"
-      />
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Lab2</Text>
+      </TouchableOpacity>
 
-      <CustomButton onPress={() => router.push("/Labs/Lab3")} text="Lab 3" />
+      <TouchableOpacity
+        onPress={() => router.push("/Labs/Lab3")}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Lab3</Text>
+      </TouchableOpacity>
 
-      <CustomButton
-        onPress={() => router.push("/Labs/Lab4/lab4")}
-        text="Lab 4"
-      />
-
-      <CustomButton onPress={() => router.push("/test/student")} text="Lab 5" />
+      <TouchableOpacity
+        onPress={() => router.push("/Labs/Lab6")}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Lab6</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -60,5 +71,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 30,
+  },
+  button: {
+    backgroundColor: Colors.PRIMARY,
+    padding: 20,
+    borderRadius: 15,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  buttonText: {
+    color: Colors.WHITE,
+    fontSize: 20,
+    textAlign: "center",
+    fontFamily: "outfit-bold",
   },
 });

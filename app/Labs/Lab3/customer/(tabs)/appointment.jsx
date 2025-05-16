@@ -262,10 +262,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: Colors.PRIMARY,
   },
   selectedService: {
     borderColor: "#F06277",
-    borderWidth: 2,
+    borderWidth: 3,
+    backgroundColor: "#F06277",
+    borderWidth: 1,
+    borderColor: Colors.PRIMARY,
   },
   serviceName: {
     fontSize: 16,
@@ -275,7 +280,7 @@ const styles = StyleSheet.create({
   },
   servicePrice: {
     fontSize: 14,
-    color: "#F06277",
+    color: "red",
     fontWeight: "500",
   },
   dateButton: {

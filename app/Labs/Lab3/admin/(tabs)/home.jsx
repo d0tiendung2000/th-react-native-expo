@@ -15,6 +15,7 @@ import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../../configs/firebase";
 import { auth } from "../../../../../configs/firebase";
 import { signOut } from "firebase/auth";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function home() {
   const navigation = useNavigation();
@@ -54,8 +55,8 @@ export default function home() {
       //thêm icon vào thanh header
       headerRight: () => (
         <TouchableOpacity onPress={handleLogout}>
-          <Ionicons
-            name="person-circle"
+          <MaterialCommunityIcons
+            name="logout"
             size={40}
             color="white"
             style={{
